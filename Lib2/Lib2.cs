@@ -1,4 +1,4 @@
-﻿namespace DotnetPerf
+﻿namespace DotnetBuildPerf
 {
     public static class Lib2
     {
