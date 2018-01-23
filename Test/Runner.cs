@@ -25,9 +25,14 @@ namespace Test
 
             var runCount = 5;
             var outFolder = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\Out"));
+            var totalRuns = runCount * combinations.Keys.Count;
+            var currentRun = 0;
 
             foreach (var description in combinations.Keys)
             {
+                currentRun++;
+                Console.WriteLine($"\n\nRun {currentRun} of {totalRuns}\n");
+
                 var timing = new Timing
                 {
                     Description = description,
