@@ -30,9 +30,6 @@ namespace Test
 
             foreach (var description in combinations.Keys)
             {
-                currentRun++;
-                Console.WriteLine($"\n\nRun {currentRun} of {totalRuns}\n");
-
                 var timing = new Timing
                 {
                     Description = description,
@@ -43,6 +40,9 @@ namespace Test
 
                 for (var i = 0; i < runCount; i++)
                 {
+                    currentRun++;
+                    Console.WriteLine($"\n\nRun {currentRun} of {totalRuns}\n");
+
                     var runTime = Time(outFolder, runDescription);
                     runTimes.Add(runTime);
                 }
