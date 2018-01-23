@@ -2,46 +2,71 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 
 namespace Test
 {
     public class Runner
     {
-        public void Generate()
+        public Timings Generate()
         {
             var combinations = new Dictionary<string, RunDescription>()
             {
-                { "legacy csproj (net461)",                     new RunDescription { ProjectFile = "Out_legacy.csproj",                     } },
-                { "net461",                                     new RunDescription { ProjectFile = "Out_net461.csproj",                     } },
-                { "net461 consuming netstandard2.0 libraries",  new RunDescription { ProjectFile = "Out_net461_consume_standard.csproj",    } },
-                { "netcoreapp2.0",                              new RunDescription { ProjectFile = "Out_netcoreapp2.0.csproj",              } },
+                { "legacy csproj (net461)",     new RunDescription { ProjectFile = "Out_legacy.csproj",                     } },
+                { "net461",                     new RunDescription { ProjectFile = "Out_net461.csproj",                     } },
+                { "netstandard2.0 libraries",   new RunDescription { ProjectFile = "Out_net461_consume_standard.csproj",    } },
+                { "netcoreapp2.0",              new RunDescription { ProjectFile = "Out_netcoreapp2.0.csproj",              } },
             };
 
-            DotNetVersion();
+            var timings = new Timings
+            {
+                DotnetVersion = DotnetVersion(),
+            };
 
-            var runCount = 2;
+            var runCount = 5;
             var outFolder = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\Out"));
 
             foreach (var description in combinations.Keys)
             {
+                var timing = new Timing
+                {
+                    Description = description,
+                };
+
                 var runDescription = combinations[description];
+                var runTimes = new List<Timing>();
 
                 for (var i = 0; i < runCount; i++)
                 {
-                    Time(outFolder, runDescription);
+                    var runTime = Time(outFolder, runDescription);
+                    runTimes.Add(runTime);
                 }
+
+                timing.Build = TimeSpan.FromTicks(runTimes.Sum(rt => rt.Build.Ticks) / runTimes.Count);
+                timing.IncrementalBuildWithoutChange = TimeSpan.FromTicks(runTimes.Sum(rt => rt.IncrementalBuildWithoutChange.Ticks) / runTimes.Count);
+                timing.IncrementalBuildWithChange = TimeSpan.FromTicks(runTimes.Sum(rt => rt.IncrementalBuildWithChange.Ticks) / runTimes.Count);
+                timings.Frameworks.Add(timing);
             }
+
+            return timings;
         }
 
-        private void Time(string outFolder, RunDescription runDescription)
+        private Timing Time(string outFolder, RunDescription runDescription)
         {
             Clean(outFolder);
-            DotNet(outFolder, $"restore {runDescription.ProjectFile}");
+            Dotnet(outFolder, $"restore {runDescription.ProjectFile}");
 
-            var buildTime                   = Time(() => DotNet(outFolder, $"msbuild {runDescription.ProjectFile}"));
-            var incrementalBuild_noChange   = Time(() => DotNet(outFolder, $"msbuild {runDescription.ProjectFile}"));
+            var buildTime                   = Time(() => Dotnet(outFolder, $"msbuild {runDescription.ProjectFile}"));
+            var incrementalBuild_noChange   = Time(() => Dotnet(outFolder, $"msbuild {runDescription.ProjectFile}"));
             Touch(Path.Combine(outFolder, @"..\Lib1\Lib1.cs"));
-            var incrementalBuild_change     = Time(() => DotNet(outFolder, $"msbuild {runDescription.ProjectFile}"));
+            var incrementalBuild_change     = Time(() => Dotnet(outFolder, $"msbuild {runDescription.ProjectFile}"));
+
+            return new Timing
+            {
+                Build = buildTime,
+                IncrementalBuildWithoutChange = incrementalBuild_noChange,
+                IncrementalBuildWithChange = incrementalBuild_change,
+            };
         }
 
         private void Touch(string file)
@@ -59,7 +84,7 @@ namespace Test
             return stopwatch.Elapsed;
         }
 
-        private void DotNet(string outFolder, string arguments)
+        private void Dotnet(string outFolder, string arguments)
         {
             var exitCode = Exec.Cmd(outFolder, @"C:\Program Files\dotnet\dotnet.exe", arguments);
 
@@ -67,10 +92,10 @@ namespace Test
                 throw new Exception($"Unexpected exit code: {exitCode}");
         }
 
-        private void DotNetVersion()
+        private string DotnetVersion()
         {
             var dotnetExe = @"C:\Program Files\dotnet\dotnet.exe";
-            Console.WriteLine(FileVersionInfo.GetVersionInfo(dotnetExe).FileVersion);
+            return FileVersionInfo.GetVersionInfo(dotnetExe).FileVersion;
         }
 
         private void Clean(string outFolder)
