@@ -5,4 +5,8 @@
     <TargetFramework>net461</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Lib2\Lib2_netstandard2.0.csproj" />
+  </ItemGroup>
+
 </Project>
