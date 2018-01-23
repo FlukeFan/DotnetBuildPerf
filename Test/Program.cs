@@ -1,12 +1,11 @@
-﻿using System;
-
-namespace Test
+﻿namespace Test
 {
     class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            var runner = new Runner();
+            runner.Generate();
         }
     }
 }
