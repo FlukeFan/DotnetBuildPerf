@@ -53,7 +53,7 @@ namespace Test
 
         private static string Seconds(TimeSpan timeSpan)
         {
-            return timeSpan.TotalSeconds.ToString("0s");
+            return timeSpan.TotalSeconds.ToString("0.00s");
         }
 
         private static string Percent(double value)
