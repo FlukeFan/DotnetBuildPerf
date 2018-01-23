@@ -17,6 +17,8 @@ namespace Test
                 { "netcoreapp2.0",                              new RunDescription { ProjectFile = "Out_netcoreapp2.0.csproj",              } },
             };
 
+            DotNetVersion();
+
             var runCount = 2;
             var outFolder = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\Out"));
 
@@ -63,6 +65,12 @@ namespace Test
 
             if (exitCode != 0)
                 throw new Exception($"Unexpected exit code: {exitCode}");
+        }
+
+        private void DotNetVersion()
+        {
+            var dotnetExe = @"C:\Program Files\dotnet\dotnet.exe";
+            Console.WriteLine(FileVersionInfo.GetVersionInfo(dotnetExe).FileVersion);
         }
 
         private void Clean(string outFolder)
