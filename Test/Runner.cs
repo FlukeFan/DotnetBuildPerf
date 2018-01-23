@@ -35,8 +35,16 @@ namespace Test
         {
             Clean(outFolder);
             DotNet(outFolder, $"restore {runDescription.ProjectFile}");
-            Time(() => DotNet(outFolder, $"msbuild {runDescription.ProjectFile}"));
-            Time(() => DotNet(outFolder, $"msbuild {runDescription.ProjectFile}"));
+
+            var buildTime                   = Time(() => DotNet(outFolder, $"msbuild {runDescription.ProjectFile}"));
+            var incrementalBuild_noChange   = Time(() => DotNet(outFolder, $"msbuild {runDescription.ProjectFile}"));
+            Touch(Path.Combine(outFolder, @"..\Lib1\Lib1.cs"));
+            var incrementalBuild_change     = Time(() => DotNet(outFolder, $"msbuild {runDescription.ProjectFile}"));
+        }
+
+        private void Touch(string file)
+        {
+            File.SetLastWriteTimeUtc(file, File.GetLastWriteTimeUtc(file) + TimeSpan.FromSeconds(1));
         }
 
         private TimeSpan Time(Action action)
