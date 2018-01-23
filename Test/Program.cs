@@ -27,7 +27,7 @@ namespace Test
                 Console.WriteLine($"{timing.Description.PadRight(31)} {Seconds(timing.Build).PadRight(15)} {Seconds(timing.IncrementalBuildWithoutChange).PadRight(15)} {Seconds(timing.IncrementalBuildWithChange).PadRight(15)}");
             }
 
-            Console.WriteLine("\nPercentages\n");
+            Console.WriteLine("\nMultiplier\n");
 
             long? baselineBuild = null;
             long? baselineIncrementalWithoutChange = null;
@@ -43,11 +43,11 @@ namespace Test
                 baselineIncrementalWithoutChange = baselineIncrementalWithoutChange ?? incrementalWithoutChangeTicks;
                 baselineIncrementalWithChange = baselineIncrementalWithChange ?? incrementalWithChangeTicks;
 
-                var buildIncrease = (buildTicks - baselineBuild.Value) / (double)baselineBuild.Value;
-                var incrementalWithoutChangeIncrease = (incrementalWithoutChangeTicks - baselineIncrementalWithoutChange.Value) / (double)baselineIncrementalWithoutChange;
-                var incrementalWithChangeIncrease = (incrementalWithChangeTicks - baselineIncrementalWithChange.Value) / (double)baselineIncrementalWithChange;
+                var buildMultiplier = buildTicks / (double)baselineBuild.Value;
+                var incrementalWithoutChangeMultiplier = incrementalWithoutChangeTicks / (double)baselineIncrementalWithoutChange;
+                var incrementalWithChangeMultiplier = incrementalWithChangeTicks / (double)baselineIncrementalWithChange;
 
-                Console.WriteLine($"{timing.Description.PadRight(31)} {Percent(buildIncrease).PadRight(15)} {Percent(incrementalWithoutChangeIncrease).PadRight(15)} {Percent(incrementalWithChangeIncrease).PadRight(15)}");
+                Console.WriteLine($"{timing.Description.PadRight(31)} {Multiplier(buildMultiplier).PadRight(15)} {Multiplier(incrementalWithoutChangeMultiplier).PadRight(15)} {Multiplier(incrementalWithChangeMultiplier).PadRight(15)}");
             }
         }
 
@@ -56,9 +56,9 @@ namespace Test
             return timeSpan.TotalSeconds.ToString("0.00s");
         }
 
-        private static string Percent(double value)
+        private static string Multiplier(double value)
         {
-            return value.ToString("+000%");
+            return value.ToString("0.0");
         }
     }
 }
