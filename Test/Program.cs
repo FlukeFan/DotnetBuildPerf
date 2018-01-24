@@ -16,8 +16,9 @@ namespace Test
         {
             Console.WriteLine($"\n\n\n");
             Console.WriteLine($"Timing Results");
-            Console.WriteLine($"==============\n\n");
-            Console.WriteLine($"dotnet.exe: {timings.DotnetVersion}\n");
+            Console.WriteLine($"==============\n");
+            Console.WriteLine($"dotnet.exe --version: {timings.DotnetVersion}");
+            Console.WriteLine($"dotnet.exe: {timings.DotnetFileVersion}\n");
             Console.WriteLine("Description                Build       Incremental  Incremental  ");
             Console.WriteLine("                                       (no changes) (with change)");
             Console.WriteLine("-----------------------------------------------------------------");

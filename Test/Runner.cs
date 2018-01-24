@@ -8,6 +8,8 @@ namespace Test
 {
     public class Runner
     {
+        public const string DotnetExe = @"C:\Program Files\dotnet\dotnet.exe";
+
         public Timings Generate()
         {
             var combinations = new Dictionary<string, RunDescription>()
@@ -21,6 +23,7 @@ namespace Test
             var timings = new Timings
             {
                 DotnetVersion = DotnetVersion(),
+                DotnetFileVersion = DotnetFileVersion(),
             };
 
             var runCount = 5;
@@ -91,16 +94,21 @@ namespace Test
 
         private void Dotnet(string outFolder, string arguments)
         {
-            var exitCode = Exec.Cmd(outFolder, @"C:\Program Files\dotnet\dotnet.exe", arguments);
+            var exitCode = Exec.Cmd(outFolder, DotnetExe, arguments);
 
             if (exitCode != 0)
                 throw new Exception($"Unexpected exit code: {exitCode}");
         }
 
+        private string DotnetFileVersion()
+        {
+            return FileVersionInfo.GetVersionInfo(DotnetExe).FileVersion;
+        }
+
         private string DotnetVersion()
         {
-            var dotnetExe = @"C:\Program Files\dotnet\dotnet.exe";
-            return FileVersionInfo.GetVersionInfo(dotnetExe).FileVersion;
+            var version = Exec.GetOutput(Path.GetDirectoryName(DotnetExe), DotnetExe, "--version");
+            return version.Replace("\n", "").Replace("\r", "");
         }
 
         private void Clean(string outFolder)
