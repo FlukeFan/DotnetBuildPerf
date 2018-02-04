@@ -25,7 +25,7 @@ namespace Test
 
             foreach (var timing in timings.Frameworks)
             {
-                Console.WriteLine($"{timing.Description.PadRight(25)} {Seconds(timing.Build).PadRight(12)} {Seconds(timing.IncrementalBuildWithoutChange).PadRight(12)} {Seconds(timing.IncrementalBuildWithChange).PadRight(12)}");
+                Console.WriteLine($"{timing.Description.PadRight(25)} {Seconds(timing.Build).PadRight(12)} {Seconds(timing.IncrementalBuildWithChange).PadRight(12)} {Seconds(timing.IncrementalBuildWithoutChange).PadRight(12)}");
             }
 
             Console.WriteLine("\nMultiplier\n");
