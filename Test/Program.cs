@@ -20,7 +20,7 @@ namespace Test
             Console.WriteLine($"dotnet.exe --version: {timings.DotnetVersion}");
             Console.WriteLine($"dotnet.exe: {timings.DotnetFileVersion}\n");
             Console.WriteLine("Description                Build       Incremental  Incremental  ");
-            Console.WriteLine("                                       (no changes) (with change)");
+            Console.WriteLine("                                       (with change)(no changes) ");
             Console.WriteLine("-----------------------------------------------------------------");
 
             foreach (var timing in timings.Frameworks)
@@ -48,7 +48,7 @@ namespace Test
                 var incrementalWithoutChangeMultiplier = incrementalWithoutChangeTicks / (double)baselineIncrementalWithoutChange;
                 var incrementalWithChangeMultiplier = incrementalWithChangeTicks / (double)baselineIncrementalWithChange;
 
-                Console.WriteLine($"{timing.Description.PadRight(25)} {Multiplier(buildMultiplier).PadRight(12)} {Multiplier(incrementalWithoutChangeMultiplier).PadRight(12)} {Multiplier(incrementalWithChangeMultiplier).PadRight(12)}");
+                Console.WriteLine($"{timing.Description.PadRight(25)} {Multiplier(buildMultiplier).PadRight(12)} {Multiplier(incrementalWithChangeMultiplier).PadRight(12)} {Multiplier(incrementalWithoutChangeMultiplier).PadRight(12)}");
             }
         }
 

@@ -44,7 +44,7 @@ namespace Test
                 for (var i = 0; i < runCount; i++)
                 {
                     currentRun++;
-                    Console.WriteLine($"\n\nRun {currentRun} of {totalRuns}\n");
+                    Console.WriteLine($"\n\nRun {currentRun} of {totalRuns} {description} run {i + 1} of {runCount}\n");
 
                     var runTime = Time(outFolder, runDescription);
                     runTimes.Add(runTime);
@@ -64,10 +64,15 @@ namespace Test
             Clean(outFolder);
             Dotnet(outFolder, $"restore {runDescription.ProjectFile}");
 
-            var buildTime                   = Time(() => Dotnet(outFolder, $"msbuild {runDescription.ProjectFile}"));
-            var incrementalBuild_noChange   = Time(() => Dotnet(outFolder, $"msbuild {runDescription.ProjectFile}"));
+            Console.WriteLine($"Performing inital build (after restore)");
+            var buildTime                   = Time(() => Dotnet(outFolder, $"msbuild {runDescription.ProjectFile} /v:n"));
+
+            Console.WriteLine($"Performing incremental build after a file has changed");
             Touch(Path.Combine(outFolder, @"..\Lib1\Lib1.cs"));
-            var incrementalBuild_change     = Time(() => Dotnet(outFolder, $"msbuild {runDescription.ProjectFile}"));
+            var incrementalBuild_change     = Time(() => Dotnet(outFolder, $"msbuild {runDescription.ProjectFile} /v:n"));
+
+            Console.WriteLine($"Performing incremental build when nothing has changed");
+            var incrementalBuild_noChange   = Time(() => Dotnet(outFolder, $"msbuild {runDescription.ProjectFile} /v:n"));
 
             return new Timing
             {
@@ -79,7 +84,7 @@ namespace Test
 
         private void Touch(string file)
         {
-            File.SetLastWriteTimeUtc(file, File.GetLastWriteTimeUtc(file) + TimeSpan.FromSeconds(1));
+            File.SetLastWriteTimeUtc(file, DateTime.UtcNow + TimeSpan.FromSeconds(1));
         }
 
         private TimeSpan Time(Action action)
