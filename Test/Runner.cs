@@ -65,14 +65,14 @@ namespace Test
             Dotnet(outFolder, $"restore {runDescription.ProjectFile}");
 
             Console.WriteLine($"Performing inital build (after restore)");
-            var buildTime                   = Time(() => Dotnet(outFolder, $"msbuild {runDescription.ProjectFile} /v:n"));
+            var buildTime                   = Time(() => Dotnet(outFolder, $"msbuild {runDescription.ProjectFile}"));
 
             Console.WriteLine($"Performing incremental build after a file has changed");
             Touch(Path.Combine(outFolder, @"..\Lib1\Lib1.cs"));
-            var incrementalBuild_change     = Time(() => Dotnet(outFolder, $"msbuild {runDescription.ProjectFile} /v:n"));
+            var incrementalBuild_change     = Time(() => Dotnet(outFolder, $"msbuild {runDescription.ProjectFile}"));
 
             Console.WriteLine($"Performing incremental build when nothing has changed");
-            var incrementalBuild_noChange   = Time(() => Dotnet(outFolder, $"msbuild {runDescription.ProjectFile} /v:n"));
+            var incrementalBuild_noChange   = Time(() => Dotnet(outFolder, $"msbuild {runDescription.ProjectFile}"));
 
             return new Timing
             {
