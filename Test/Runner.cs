@@ -26,6 +26,8 @@ namespace Test
                 DotnetFileVersion = DotnetFileVersion(),
             };
 
+            DotnetSdkVersion(timings);
+
             var runCount = 5;
             var outFolder = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"..\Out"));
             var totalRuns = runCount * combinations.Keys.Count;
@@ -114,6 +116,26 @@ namespace Test
         {
             var version = Exec.GetOutput(Path.GetDirectoryName(DotnetExe), DotnetExe, "--version");
             return version.Replace("\n", "").Replace("\r", "");
+        }
+
+        private void DotnetSdkVersion(Timings timings)
+        {
+            var info = Exec.GetOutput(Path.GetDirectoryName(DotnetExe), DotnetExe, "--info");
+
+            var lastLines = info.Split("\n")
+                .Where(l => l.Trim().Length > 0)
+                .TakeLast(2)
+                .ToList();
+
+            if (lastLines.Count < 1)
+                return;
+
+            timings.SdkVersion = lastLines[0];
+
+            if (lastLines.Count < 2)
+                return;
+
+            timings.SdkBuildVersion = lastLines[1];
         }
 
         private void Clean(string outFolder)

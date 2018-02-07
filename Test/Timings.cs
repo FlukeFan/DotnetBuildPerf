@@ -6,6 +6,8 @@ namespace Test
     {
         public string DotnetVersion;
         public string DotnetFileVersion;
+        public string SdkVersion;
+        public string SdkBuildVersion;
 
         public IList<Timing> Frameworks = new List<Timing>();
     }
